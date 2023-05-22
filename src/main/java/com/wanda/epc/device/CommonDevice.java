@@ -1,6 +1,12 @@
 package com.wanda.epc.device;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.db.nosql.redis.RedisDS;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.config.emqx.MqttSendClient;
 import com.wanda.epc.constant.IotEpaConstant;
@@ -15,16 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 @Service
 public class CommonDevice extends Thread {
 
@@ -64,9 +67,8 @@ public class CommonDevice extends Thread {
     }
 
     public synchronized void sendAllMessage(DeviceMessage dm) {
-        DeviceSendMessage dsm = convert(dm);
+        DeviceSendMessage dsm = syncConvert(dm);
         //发送所在子系统状态
-        subsystemStatus();
         deviceMsgQueue.add(dsm);
     }
 
@@ -100,7 +102,7 @@ public class CommonDevice extends Thread {
     }
 
     /**
-     * @Description
+     * @Description 采集数据转换
      * @param dm
      */
     private DeviceSendMessage convert(DeviceMessage dm) {
@@ -123,23 +125,102 @@ public class CommonDevice extends Thread {
         } else {
             value = "0";
         }
+        //是否转换
+        value = operatorString(dm,value);
         //是否计算
-        if (StringUtils.isNotEmpty(dm.getFormula())){
-            String formula = value+dm.getFormula();
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
-            try {
-                value = new DecimalFormat("0.00").format(engine.eval(formula));
-            }catch (Exception e){
-                e.printStackTrace();
-                logger.info("{},{}点位计算式转换错误", dm.getEqId(),dm.getParamId());
-            }
-        }
+        value = calculate(dm, value);
         dsc.setValue(value);
         dsm.setMqtt_client_id(clientId);
         dsm.setSequence_no(1L);
         dsm.setContent(list);
         return dsm;
     }
+
+    /**
+     * @Description 只封装 不计算
+     * @param dm
+     */
+    private DeviceSendMessage syncConvert(DeviceMessage dm) {
+        DeviceSendContent dsc = new DeviceSendContent();
+        DeviceSendMessage dsm = new DeviceSendMessage();
+        List<DeviceSendContent> list = new ArrayList<>();
+        dsc.setParamName(dm.getParamName());
+        dsc.setMeter(dm.getEqId());
+        dsc.setFuncid(dm.getParamId());
+        dsc.setTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
+        dsc.setValue(dm.getValue());
+        list.add(dsc);
+        dsm.setMqtt_client_id(clientId);
+        dsm.setSequence_no(1L);
+        dsm.setContent(list);
+        return dsm;
+    }
+
+    /***
+     * @Description 进行加减乘除计算
+     * @param dm
+     * @param value
+     * @return
+     */
+    private String calculate(DeviceMessage dm, String value){
+        String formula= dm.getFormula();
+        if (StringUtils.isNotEmpty(formula)){
+            formula = value + formula;
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
+            try {
+                return new DecimalFormat("0.00").format(engine.eval(formula));
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("{},{}点位计算式转换错误", dm.getEqId(),dm.getParamId());
+            }
+        }
+        return value;
+    }
+
+    /***
+     * @Description 采集值转换
+     * @param dm
+     * @param value
+     * @return
+     */
+    public String operatorString(DeviceMessage dm, String value){
+        String operatorStatus = dm.getOpratorStatusString();
+        if (StringUtils.isNotEmpty(operatorStatus)){
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(operatorStatus);
+                if (StringUtils.isNotEmpty(jsonNode.get(value).asText())){
+                    return jsonNode.get(value).asText();
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+        return value;
+    }
+
+    /***
+     * @Description 控制值转换
+     * @param dm
+     * @param value
+     * @return
+     */
+    public String controlString(DeviceMessage dm, String value){
+        String controlStatus = dm.getOpratorControlString();
+        if (StringUtils.isNotEmpty(controlStatus)){
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(controlStatus);
+                if (StringUtils.isNotEmpty(jsonNode.get(value).asText())){
+                    return jsonNode.get(value).asText();
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+        return value;
+    }
+
 
 
 
@@ -151,7 +232,7 @@ public class CommonDevice extends Thread {
         Boolean flag = true;
         String key = "data."+"Pj" + gcId + "." + gatewayId + "." + dsm.getEqId() + "-" +dsm.getParamId();
         DeviceMessage redisDm = JSON.parseObject(JSON.toJSONString(redisUtil.get(key)), DeviceMessage.class);
-        if (redisDm != null && dsm.getValue().equals(redisDm.getValue())){
+        if (redisDm != null && redisDm.getValue()!=null && dsm.getValue()!=null && dsm.getValue().equals(redisDm.getValue())){
             flag = false;
         }
         redisUtil.set(key,dsm);
@@ -172,6 +253,4 @@ public class CommonDevice extends Thread {
             }
         }
     }
-
-
 }

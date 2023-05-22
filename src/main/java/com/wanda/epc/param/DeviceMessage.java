@@ -1,5 +1,7 @@
 package com.wanda.epc.param;
 
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * 设备消息类
  *
@@ -31,6 +33,13 @@ public class DeviceMessage {
      * 点位code
      */
     private String paramName;
+
+    //控制计算转换
+    private String opratorControlString;
+
+    //状态计算转换
+    private String opratorStatusString;
+
 
 
     public String getParamName() {
@@ -123,6 +132,22 @@ public class DeviceMessage {
         this.outParam = outParam;
     }
 
+    public String getOpratorControlString() {
+        return opratorControlString;
+    }
+
+    public void setOpratorControlString(String opratorControlString) {
+        this.opratorControlString = opratorControlString;
+    }
+
+    public String getOpratorStatusString() {
+        return opratorStatusString;
+    }
+
+    public void setOpratorStatusString(String opratorStatusString) {
+        this.opratorStatusString = opratorStatusString;
+    }
+
     @Override
     public String toString() {
         return "DeviceMessage{" +
@@ -137,6 +162,8 @@ public class DeviceMessage {
                 ", value='" + value + '\'' +
                 ", updateTime='" + updateTime + '\'' +
                 ", paramName='" + paramName + '\'' +
+                ", opratorControlString='" + opratorControlString + '\'' +
+                ", opratorStatusString='" + opratorStatusString + '\'' +
                 '}';
     }
 }

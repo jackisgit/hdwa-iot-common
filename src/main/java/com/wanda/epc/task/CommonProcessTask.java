@@ -36,13 +36,13 @@ public class CommonProcessTask {
     private String gatewayId;
 
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/4 * * * ?")
     public boolean processData() throws Exception {
         Set<String> keys = redisUtil.scan("data."+ "Pj" + gcId + "." + gatewayId + ".*");
         if (!CollectionUtils.isEmpty(keys)) {//data.开头的
+            logger.info("开始同步全量的redis数据值为");
             for (String key : keys) {
                 DeviceMessage dm = JSON.parseObject(JSON.toJSONString(redisUtil.get(key)), DeviceMessage.class);
-                logger.info("开始同步{}的数据值为{},", dm.getEqId() + dm.getParamId(), dm.getValue());
                 dm.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                 device.sendAllMessage(dm);
             }
