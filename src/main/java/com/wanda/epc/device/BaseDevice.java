@@ -29,9 +29,7 @@ public abstract class BaseDevice {
 
     protected Map<String, DeviceMessage> deviceParamMap = new HashMap<String, DeviceMessage>();
 
-    protected Map<String, DeviceMessage> outParamMap = new HashMap<String, DeviceMessage>();
-
-    protected Map<String, DeviceMessage> controlParamMap = new HashMap<String, DeviceMessage>();
+    public static Map<String, DeviceMessage> controlParamMap = new HashMap<String, DeviceMessage>();
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDevice.class);
 

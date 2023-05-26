@@ -133,6 +133,8 @@ public class CommonDevice extends Thread {
         dsm.setMqtt_client_id(clientId);
         dsm.setSequence_no(1L);
         dsm.setContent(list);
+        dm.setValue(value);
+        dm.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
         return dsm;
     }
 
@@ -164,7 +166,7 @@ public class CommonDevice extends Thread {
      */
     private String calculate(DeviceMessage dm, String value){
         String formula= dm.getFormula();
-        if (StringUtils.isNotEmpty(formula)){
+        if (StringUtils.isNotEmpty(formula) && !formula.equals("null")){
             formula = value + formula;
             ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
             try {
@@ -235,6 +237,7 @@ public class CommonDevice extends Thread {
         if (redisDm != null && redisDm.getValue()!=null && dsm.getValue()!=null && dsm.getValue().equals(redisDm.getValue())){
             flag = false;
         }
+        dsm.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
         redisUtil.set(key,dsm);
         return flag;
     }

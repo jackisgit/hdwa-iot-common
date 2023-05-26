@@ -1,11 +1,17 @@
 package com.wanda.epc.config.emqx;//package com.wd.iot.service.emqx;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanda.epc.constant.IotEpaConstant;
 import com.wanda.epc.device.BaseDevice;
+import com.wanda.epc.device.CommonDevice;
+import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.param.DeviceMessageRevice;
 import com.wanda.epc.param.DeviceSendContent;
 import com.wanda.epc.util.ApplicationContextUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -37,6 +43,9 @@ public class MqttAcceptCallback implements MqttCallbackExtended {
     @Autowired
     private ApplicationContextUtils applicationContext;
 
+    @Autowired
+    private CommonDevice commonDevice;
+
 
     @Value("${beanName}")
     private String beanName;
@@ -62,19 +71,21 @@ public class MqttAcceptCallback implements MqttCallbackExtended {
      */
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-        logger.info("接收消息主题 : " + topic);
-        logger.info("接收消息Qos : " + mqttMessage.getQos());
-        //不知道为啥utf-8不行只能用gb2312
         String message = new String(mqttMessage.getPayload(), "gb2312");
-        logger.info("接收消息内容 : " + message);
         DeviceMessageRevice deviceMessageRevice = JSON.parseObject(message, DeviceMessageRevice.class);
         DeviceSendContent deviceReceiveContent = deviceMessageRevice.getContent().get(0);
         Integer funcid = deviceReceiveContent.getFuncid();
         String meter = deviceReceiveContent.getMeter();
         String value = deviceReceiveContent.getValue();
+        DeviceMessage dm = BaseDevice.controlParamMap.get(meter + "-" + funcid);
+        if (null == dm) {
+            return;
+        }
+        logger.info("接收控制消息内容 : " + message);
+        //控制值映射转换
+        value = commonDevice.controlString(dm, value);
         BaseDevice bean = (BaseDevice) applicationContext.getBean(beanName, BaseDevice.class);
         bean.dispatchCommand(meter, funcid, value, message);
-//        控制topic: project/广场ID/setdown type: pointset
     }
 
     /**
@@ -115,5 +126,6 @@ public class MqttAcceptCallback implements MqttCallbackExtended {
                 +  gcId
                 + IotEpaConstant.SEDOWN , 0);
     }
+
 }
 
