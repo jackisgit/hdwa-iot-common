@@ -191,8 +191,9 @@ public class CommonDevice extends Thread {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(operatorStatus);
-                if (StringUtils.isNotEmpty(jsonNode.get(value).asText())){
-                    return jsonNode.get(value).asText();
+                if (jsonNode.get(value) !=null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
+                    value = jsonNode.get(value).asText();
+                    return value;
                 }
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -213,8 +214,9 @@ public class CommonDevice extends Thread {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(controlStatus);
-                if (StringUtils.isNotEmpty(jsonNode.get(value).asText())){
-                    return jsonNode.get(value).asText();
+                if (jsonNode.get(value) !=null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
+                    value = jsonNode.get(value).asText();
+                    return value;
                 }
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
