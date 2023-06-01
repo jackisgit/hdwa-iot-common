@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.text.DecimalFormat;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 @Service
 public class CommonDevice extends Thread {
 
@@ -50,7 +52,7 @@ public class CommonDevice extends Thread {
 
     private Queue<DeviceSendMessage> deviceMsgQueue = new ConcurrentLinkedQueue<DeviceSendMessage>();
 
-    private String clientId = "IOT-EPC-"+gcId+"-"+ gatewayId;
+    private String clientId = "IOT-EPC-" + gcId + "-" + gatewayId;
 
     private int processInterval = 1;
 
@@ -61,7 +63,7 @@ public class CommonDevice extends Thread {
         //发送所在子系统状态
         subsystemStatus();
         //数据变化发送emq,不变化不更新
-        if (isUpdate(dm)){
+        if (isUpdate(dm)) {
             deviceMsgQueue.add(dsm);
         }
     }
@@ -79,11 +81,11 @@ public class CommonDevice extends Thread {
                 DeviceSendMessage pMessage = deviceMsgQueue.poll();
                 if (pMessage != null) {
                     sendClient.publish(true,
-                            IotEpaConstant.mqtt_topic_prefix_project+gcId+ IotEpaConstant.REPORT,
+                            IotEpaConstant.mqtt_topic_prefix_project + gcId + IotEpaConstant.REPORT,
                             JSON.toJSONString(pMessage));
                 }
                 Thread.sleep(processInterval);
-            } catch(Exception e){
+            } catch (Exception e) {
                 logger.error(e.getMessage());
             }
         }
@@ -93,17 +95,17 @@ public class CommonDevice extends Thread {
     }
 
 
-    public void feedback(String message)  {
+    public void feedback(String message) {
         FeedbackTask.addControlPool(message);
     }
 
-    public void controlMessage(String message)  {
+    public void controlMessage(String message) {
         FeedbackTask.addControlPool(message);
     }
 
     /**
-     * @Description 采集数据转换
      * @param dm
+     * @Description 采集数据转换
      */
     private DeviceSendMessage convert(DeviceMessage dm) {
         DeviceSendContent dsc = new DeviceSendContent();
@@ -126,7 +128,7 @@ public class CommonDevice extends Thread {
             value = "0";
         }
         //是否转换
-        value = operatorString(dm,value);
+        value = operatorString(dm, value);
         //是否计算
         value = calculate(dm, value);
         dsc.setValue(value);
@@ -139,8 +141,8 @@ public class CommonDevice extends Thread {
     }
 
     /**
-     * @Description 只封装 不计算
      * @param dm
+     * @Description 只封装 不计算
      */
     private DeviceSendMessage syncConvert(DeviceMessage dm) {
         DeviceSendContent dsc = new DeviceSendContent();
@@ -164,16 +166,16 @@ public class CommonDevice extends Thread {
      * @param value
      * @return
      */
-    private String calculate(DeviceMessage dm, String value){
-        String formula= dm.getFormula();
-        if (StringUtils.isNotEmpty(formula) && !formula.equals("null")){
+    private String calculate(DeviceMessage dm, String value) {
+        String formula = dm.getFormula();
+        if (StringUtils.isNotEmpty(formula) && !formula.equals("null")) {
             formula = value + formula;
             ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
             try {
                 return new DecimalFormat("0.00").format(engine.eval(formula));
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                logger.info("{},{}点位计算式转换错误", dm.getEqId(),dm.getParamId());
+                logger.info("{},{}点位计算式转换错误", dm.getEqId(), dm.getParamId());
             }
         }
         return value;
@@ -185,14 +187,19 @@ public class CommonDevice extends Thread {
      * @param value
      * @return
      */
-    public String operatorString(DeviceMessage dm, String value){
+    public String operatorString(DeviceMessage dm, String value) {
         String operatorStatus = dm.getOpratorStatusString();
-        if (StringUtils.isNotEmpty(operatorStatus)){
+        if (StringUtils.isNotEmpty(operatorStatus)) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(operatorStatus);
-                if (jsonNode.get(value) !=null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
+                logger.info("采集值转换:{},{},转换前值为:{}", dm.getEqId(), dm.getParamId(), value);
+                if (value.indexOf(".") != -1) {
+                    value = value.substring(0, value.indexOf("."));
+                }
+                if (jsonNode.get(value) != null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
                     value = jsonNode.get(value).asText();
+                    logger.info("采集值转换:{},{},转换后值为：{}", dm.getEqId(), dm.getParamId(), value);
                     return value;
                 }
             } catch (JsonProcessingException e) {
@@ -208,14 +215,20 @@ public class CommonDevice extends Thread {
      * @param value
      * @return
      */
-    public String controlString(DeviceMessage dm, String value){
+    public String controlString(DeviceMessage dm, String value) {
         String controlStatus = dm.getOpratorControlString();
-        if (StringUtils.isNotEmpty(controlStatus)){
+        if (StringUtils.isNotEmpty(controlStatus)) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(controlStatus);
-                if (jsonNode.get(value) !=null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
+
+                logger.info("控制值转换:{},{},转换前值为:{}", dm.getEqId(), dm.getParamId(), value);
+                if (value.indexOf(".") != -1) {
+                    value = value.substring(0, value.indexOf("."));
+                }
+                if (jsonNode.get(value) != null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
                     value = jsonNode.get(value).asText();
+                    logger.info("控制值转换:{},{},转换后值为：{}", dm.getEqId(), dm.getParamId(), value);
                     return value;
                 }
             } catch (JsonProcessingException e) {
@@ -226,36 +239,35 @@ public class CommonDevice extends Thread {
     }
 
 
-
-
     /**
-     * @Description 判断数据是否变化
      * @param dsm
+     * @Description 判断数据是否变化
      */
     private Boolean isUpdate(DeviceMessage dsm) {
         Boolean flag = true;
-        String key = "data."+"Pj" + gcId + "." + gatewayId + "." + dsm.getEqId() + "-" +dsm.getParamId();
+        String key = "data." + "Pj" + gcId + "." + gatewayId + "." + dsm.getEqId() + "-" + dsm.getParamId();
         DeviceMessage redisDm = JSON.parseObject(JSON.toJSONString(redisUtil.get(key)), DeviceMessage.class);
-        if (redisDm != null && redisDm.getValue()!=null && dsm.getValue()!=null && dsm.getValue().equals(redisDm.getValue())){
+        if (redisDm != null && redisDm.getValue() != null && dsm.getValue() != null && dsm.getValue().equals(redisDm.getValue())) {
             flag = false;
         }
         dsm.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
-        redisUtil.set(key,dsm);
+        redisUtil.set(key, dsm);
         return flag;
     }
 
     /**
      * @Description 子系统状态
      */
-    private void subsystemStatus(){
-        if (StringUtils.isNotEmpty(subsystem)){
+    private void subsystemStatus() {
+        if (StringUtils.isNotEmpty(subsystem)) {
             String[] subsystemSplit = subsystem.split("/");
-            if (subsystemSplit.length >0){
-                for (String systemName: subsystemSplit){
+            if (subsystemSplit.length > 0) {
+                for (String systemName : subsystemSplit) {
                     String redisKey = statusKey + systemName;
                     redisUtil.set(redisKey, ConvertUtil.getNewDateTime());
                 }
             }
         }
     }
+
 }
