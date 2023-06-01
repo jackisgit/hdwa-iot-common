@@ -79,6 +79,7 @@ public class MqttAcceptCallback implements MqttCallbackExtended {
         String value = deviceReceiveContent.getValue();
         DeviceMessage dm = BaseDevice.controlParamMap.get(meter + "-" + funcid);
         if (null == dm) {
+            logger.info("该采集器不存在设备点位 : {}-{}",meter, funcid);
             return;
         }
         logger.info("接收控制消息内容 : " + message);
