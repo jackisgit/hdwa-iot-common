@@ -52,7 +52,6 @@ public abstract class BaseDevice {
     private int threadNum; // 线程数
 
 
-
     @PostConstruct
     public void run() {
         Set<String> keys = redisUtil.scan("Pj" + gcId + "." + gatewayId + ".*");
@@ -64,10 +63,10 @@ public abstract class BaseDevice {
                 String outParamId = deviceMessage.getOutParamId();
                 if (StringUtils.isNotEmpty(outParamId)) {
                     boolean result = deviceParamListMap.containsKey(outParamId);
-                    if(result) {
+                    if (result) {
                         List<DeviceMessage> deviceMessageList = deviceParamListMap.get(outParamId);
                         deviceMessageList.add(deviceMessage);
-                        deviceParamListMap.put(outParamId,deviceMessageList);
+                        deviceParamListMap.put(outParamId, deviceMessageList);
 
                     } else {
                         List<DeviceMessage> deviceMessageList = new ArrayList<>();
