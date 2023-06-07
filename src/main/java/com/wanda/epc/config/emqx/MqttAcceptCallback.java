@@ -1,9 +1,6 @@
 package com.wanda.epc.config.emqx;//package com.wd.iot.service.emqx;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanda.epc.constant.IotEpaConstant;
 import com.wanda.epc.device.BaseDevice;
 import com.wanda.epc.device.CommonDevice;
@@ -11,7 +8,6 @@ import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.param.DeviceMessageRevice;
 import com.wanda.epc.param.DeviceSendContent;
 import com.wanda.epc.util.ApplicationContextUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -83,6 +79,11 @@ public class MqttAcceptCallback implements MqttCallbackExtended {
             return;
         }
         logger.info("接收控制消息内容 : " + message);
+        //如果控制点为防盗或者门禁采集器时，发送控制值
+        if ("FD".equals(dm.getCollectCode()) || "MJ".equals(dm.getCollectCode())) {
+            dm.setValue(value);
+            commonDevice.sendMessage(dm);
+        }
         //控制值映射转换
         value = commonDevice.controlString(dm, value);
         BaseDevice bean = (BaseDevice) applicationContext.getBean(beanName, BaseDevice.class);
