@@ -48,13 +48,20 @@ public abstract class BaseDevice {
     @Autowired
     CommonDevice commonDevice;
 
+    /***
+     * 线程数
+     */
     @Value("${epc.threadNum}")
-    private int threadNum; // 线程数
-
+    private int threadNum;
 
     @PostConstruct
     public void run() {
         Set<String> keys = redisUtil.scan("Pj" + gcId + "." + gatewayId + ".*");
+        Set<String> dataKeys = redisUtil.scan("data.Pj" + gcId + "." + gatewayId + ".*");
+        if (!CollectionUtils.isEmpty(dataKeys)) {
+            Long count = redisUtil.removeBatch(dataKeys);
+            logger.info("==============初始化删除data数据{}条================", count);
+        }
         if (!CollectionUtils.isEmpty(keys)) {
             for (String key : keys) {
                 DeviceMessage deviceMessage = JSON.parseObject(JSON.toJSONString(redisUtil.get(key)), DeviceMessage.class);
@@ -84,7 +91,6 @@ public abstract class BaseDevice {
         for (int i = 0; i < threadNum; i++) {
             executor.execute(commonDevice);
         }
-//        commonDevice.start();
         //启动控制反馈队列
         ControlSendThread controlThread = new ControlSendThread(mqttSendClient, gcId);
         new Thread(controlThread).start();
@@ -112,6 +118,7 @@ public abstract class BaseDevice {
      * @param meter
      * @param funcid
      * @param value
+     * @param message
      * @return
      */
     public abstract void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception;
@@ -121,6 +128,7 @@ public abstract class BaseDevice {
      * 数据采集-带有参数
      *
      * @return
+     * @param obj
      * @throws Exception
      */
     public abstract boolean processData(String... obj) throws Exception;
