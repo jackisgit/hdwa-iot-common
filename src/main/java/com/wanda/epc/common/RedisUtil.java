@@ -652,6 +652,11 @@ public final class RedisUtil {
         return redisTemplate.hasKey(key);
     }
 
+    /**
+     * 批量删除key,也删除对应的value
+     * @param dataKeys
+     * @return
+     */
     public Long removeBatch(Set<String> dataKeys) {
         return redisTemplate.delete(dataKeys);
     }
