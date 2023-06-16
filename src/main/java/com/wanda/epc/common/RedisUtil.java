@@ -652,5 +652,8 @@ public final class RedisUtil {
         return redisTemplate.hasKey(key);
     }
 
+    public Long removeBatch(Set<String> dataKeys) {
+        return redisTemplate.delete(dataKeys);
+    }
 }
 
