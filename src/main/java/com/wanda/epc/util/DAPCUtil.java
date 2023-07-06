@@ -297,21 +297,6 @@ public class DAPCUtil {
         return (byteToUnsigned(high) * 256 + byteToUnsigned(low));
     }
 
-    // 测试ModbusBase数据处理
-//    public static void main(String[] args) {
-//        // 写入的数据格式be 03 00 00 00 02 de c4
-//        // 读出的数据格式be 03 04 00 00 00 3a 34 eb
-//        // 通讯所需字段=通讯地址、功能码、起始位、停止位
-//        // 数据处理所需字段=偏移量、符号位、计算公式
-//        /*
-//         * float result=
-//         * formIEEE754Float((byte)0x41,(byte)0x7E,(byte)0xCD,(byte)0x80);
-//         * System.out.println(result);
-//         */
-//
-//        System.out.println(formSignedWord((byte) 0x08, (byte) 0xfe));
-//    }
-
     /**
      * Word类型有符号数据处理 param hign param low return formUnsignedWord(hign,low)
      */
