@@ -69,9 +69,11 @@ public class CommonDevice extends Thread {
     }
 
     public synchronized void sendAllMessage(DeviceMessage dm) {
-        DeviceSendMessage dsm = syncConvert(dm);
-        //发送所在子系统状态
-        deviceMsgQueue.add(dsm);
+        if (StringUtils.isNotEmpty(dm.getValue())){
+            DeviceSendMessage dsm = syncConvert(dm);
+            //发送所在子系统状态
+            deviceMsgQueue.add(dsm);
+        }
     }
 
     @Override
@@ -124,8 +126,6 @@ public class CommonDevice extends Thread {
             } else if (value.equals("false")) {
                 value = "0";
             }
-        } else {
-            value = "0";
         }
         //是否转换
         value = operatorString(dm, value);
