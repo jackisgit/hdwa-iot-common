@@ -91,9 +91,6 @@ public abstract class BaseDevice {
         for (int i = 0; i < threadNum; i++) {
             executor.execute(commonDevice);
         }
-        //启动控制反馈队列
-        ControlSendThread controlThread = new ControlSendThread(mqttSendClient, gcId);
-        new Thread(controlThread).start();
     }
 
     /**

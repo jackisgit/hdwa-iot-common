@@ -1,7 +1,5 @@
 package com.wanda.epc.device;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.db.nosql.redis.RedisDS;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,10 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.config.emqx.MqttSendClient;
 import com.wanda.epc.constant.IotEpaConstant;
-import com.wanda.epc.device.feed.FeedbackTask;
-import com.wanda.epc.param.DeviceMessage;
-import com.wanda.epc.param.DeviceSendContent;
-import com.wanda.epc.param.DeviceSendMessage;
+import com.wanda.epc.param.*;
 import com.wanda.epc.util.ConvertUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -98,11 +93,37 @@ public class CommonDevice extends Thread {
 
 
     public void feedback(String message) {
-        FeedbackTask.addControlPool(message);
+        sendFeedMessage(message);
     }
 
-    public void controlMessage(String message) {
-        FeedbackTask.addControlPool(message);
+    /***
+     * 发送反馈mqtt
+     */
+    public void sendFeedMessage(String controlMessage)  {
+        DeviceMessageRevice deviceMessage = JSON.parseObject(controlMessage, DeviceMessageRevice.class);
+        if (deviceMessage !=null){
+            DeviceFeedMqtt deviceFeedCloudMqtt = new DeviceFeedMqtt();
+            deviceFeedCloudMqtt.setPacket_type(IotEpaConstant.POINTSETACK);
+            deviceFeedCloudMqtt.setSequence_no(deviceMessage.getSequence_no());
+            List<DeviceFeedData> feed = new ArrayList<>();
+            if (deviceMessage.getContent() !=null){
+                for (DeviceSendContent deviceData:deviceMessage.getContent()){
+                    DeviceFeedData feedData = new DeviceFeedData();
+                    feedData.setMeter(deviceData.getMeter());
+                    feedData.setFuncid(deviceData.getFuncid());
+                    feedData.setTime(deviceData.getTime());
+                    feedData.setValue(deviceData.getValue());
+                    feedData.setEndtime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
+                    feedData.setResult("success");
+                    feed.add(feedData);
+                }
+                deviceFeedCloudMqtt.setContent(feed);
+                sendClient.publish(IotEpaConstant.mqtt_topic_prefix_project +gcId+ IotEpaConstant.SETUP, JSONObject.toJSONString(deviceFeedCloudMqtt));
+                logger.info("{}:反馈到iot-project{}"
+                        ,IotEpaConstant.mqtt_topic_prefix_project +gcId+ IotEpaConstant.SETUP
+                        ,JSONObject.toJSONString(deviceFeedCloudMqtt));
+            }
+        }
     }
 
     /**
