@@ -3,7 +3,6 @@ package com.wanda.epc.device;
 import com.alibaba.fastjson.JSON;
 import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.config.emqx.MqttSendClient;
-import com.wanda.epc.device.feed.ControlSendThread;
 import com.wanda.epc.param.DeviceMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -91,9 +90,6 @@ public abstract class BaseDevice {
         for (int i = 0; i < threadNum; i++) {
             executor.execute(commonDevice);
         }
-        //启动控制反馈队列
-        ControlSendThread controlThread = new ControlSendThread(mqttSendClient, gcId);
-        new Thread(controlThread).start();
     }
 
     /**
