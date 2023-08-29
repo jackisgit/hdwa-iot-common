@@ -4,12 +4,15 @@
 package com.wanda.epc.util;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 数字/模拟功率转换工具
  *
  * @author liaiguo
  *
  */
+@Slf4j
 public class DAPCUtil {
 
     /**
@@ -519,7 +522,7 @@ public class DAPCUtil {
             }
 
         } catch (Exception e) {
-            System.out.println("param:" + param + ",不是正规的 类型，无法搞定！");
+            log.info("param:" + param + ",不是正规的 类型，无法搞定！");
         }
         return false;
     }
