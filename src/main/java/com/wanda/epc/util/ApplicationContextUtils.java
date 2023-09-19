@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
- * @author LianYanFei
+ * @author 孙率众
  * @version 1.0
  * @project iot-epc-module
  * @description 上下文工具类

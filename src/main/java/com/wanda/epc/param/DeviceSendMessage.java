@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @program: iot_epc
  * @description: 设备发送消息对象
- * @author: LianYanFei
+ * @author: 孙率众
  * @create: 2022-09-17 11:05
  **/
 @Data

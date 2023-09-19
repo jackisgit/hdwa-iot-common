@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * 发送消息的参数
- * @Author LianYanFei
+ * @Author 孙率众
  * @Date 下午3:40 2022/9/5
  * @param  * @param null
  * @return null

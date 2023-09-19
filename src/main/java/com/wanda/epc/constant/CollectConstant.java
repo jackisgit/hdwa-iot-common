@@ -4,7 +4,7 @@ package com.wanda.epc.constant;
 /**
  * 基本常量
  *
- * @Author LianYanFei
+ * @Author 孙率众
  * @Date 上午11:32 2022/8/25
  **/
 public class CollectConstant {

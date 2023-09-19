@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @author LianYanFei
+ * @author 孙率众
  * @version 1.0
  * @project iot_epc
  * @description ping工具类多线程

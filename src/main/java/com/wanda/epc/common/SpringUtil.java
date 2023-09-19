@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 获取spring容器中bean对象
- * @Author LianYanFei
+ * @Author 孙率众
  * @Date 下午5:35 2022/9/3
  * @param  * @param null
  * @return null 

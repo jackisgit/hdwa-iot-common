@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 /**
  * @program: iot_epc
  * @description: emq消息发送conetent对象
- * @author: LianYanFei
+ * @author: 孙率众
  * @create: 2022-09-17 14:08
  **/
 @Data

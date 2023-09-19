@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @program: wanda_epa
  * @description: Redis操作工具类
- * @author: LianYanFei
+ * @author: 孙率众
  * @create: 2022-09-04 16:21
  **/
 @Component
