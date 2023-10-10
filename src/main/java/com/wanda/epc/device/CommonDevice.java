@@ -189,7 +189,7 @@ public class CommonDevice extends Thread {
      */
     private String calculate(DeviceMessage dm, String value) {
         String formula = dm.getFormula();
-        if (StringUtils.isNotEmpty(formula) && !formula.equals("null")) {
+        if (StringUtils.isNotEmpty(formula) && !formula.contains("null")) {
             formula = value + formula;
             ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
             try {
