@@ -79,7 +79,7 @@ public class MqttAcceptCallback implements MqttCallbackExtended {
             }
             logger.info("接收控制消息内容 : " + message);
             //如果控制点为防盗或者门禁采集器时，发送控制值
-            if ("FD".equals(dm.getCollectCode()) || "MJ".equals(dm.getCollectCode())) {
+            if (dm.getCollectCode().contains("FD") || dm.getCollectCode().contains("MJ")) {
                 dm.setValue(value);
                 commonDevice.sendMessage(dm);
             }
