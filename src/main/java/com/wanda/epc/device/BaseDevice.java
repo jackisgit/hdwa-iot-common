@@ -26,8 +26,6 @@ public abstract class BaseDevice {
 
     protected Map<String, List<DeviceMessage>> deviceParamListMap = new HashMap<String, List<DeviceMessage>>();
 
-    protected Map<String, DeviceMessage> deviceParamMap = new HashMap<String, DeviceMessage>();
-
     public static Map<String, DeviceMessage> controlParamMap = new HashMap<String, DeviceMessage>();
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDevice.class);
@@ -79,12 +77,11 @@ public abstract class BaseDevice {
                         deviceMessageList.add(deviceMessage);
                         deviceParamListMap.put(outParamId, deviceMessageList);
                     }
-                    deviceParamMap.put(outParamId, deviceMessage);
                     controlParamMap.put(controlKey, deviceMessage);
                 }
             }
         }
-        logger.info("==============初始化{}广场、{}子系统的redis数据{}条================", gcId, gatewayId, deviceParamMap.size());
+        logger.info("==============初始化{}广场、{}子系统的redis数据{}条================", gcId, gatewayId, deviceParamListMap.size());
 //        启动发送队列线程
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         for (int i = 0; i < threadNum; i++) {
