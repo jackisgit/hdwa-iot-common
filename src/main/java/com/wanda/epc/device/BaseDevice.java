@@ -17,10 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @program: iot_dapc
- * @description: 设备采集及指令下发基础类
  * @author: 孙率众
- * @create: 2022-09-13 11:35
  **/
 public abstract class BaseDevice {
 

@@ -1,10 +1,7 @@
 package com.wanda.epc.constant;
 
 /**
- * @program: wanda_epa
- * @description: 万达数据采集常量类
  * @author: 孙率众
- * @create: 2022-09-04 15:58
  **/
 public class IotEpaConstant {
 
