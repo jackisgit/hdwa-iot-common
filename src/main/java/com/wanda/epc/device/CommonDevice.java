@@ -10,6 +10,7 @@ import com.wanda.epc.config.emqx.MqttSendClient;
 import com.wanda.epc.constant.IotEpaConstant;
 import com.wanda.epc.param.*;
 import com.wanda.epc.util.ConvertUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
+@Slf4j
 public class CommonDevice extends Thread {
 
     private final static Logger logger = LoggerFactory.getLogger(CommonDevice.class);
@@ -64,7 +66,7 @@ public class CommonDevice extends Thread {
     }
 
     public synchronized void sendAllMessage(DeviceMessage dm) {
-        if (StringUtils.isNotEmpty(dm.getValue())){
+        if (StringUtils.isNotEmpty(dm.getValue())) {
             DeviceSendMessage dsm = syncConvert(dm);
             //发送所在子系统状态
             deviceMsgQueue.add(dsm);
@@ -99,15 +101,15 @@ public class CommonDevice extends Thread {
     /***
      * 发送反馈mqtt
      */
-    public void sendFeedMessage(String controlMessage)  {
+    public void sendFeedMessage(String controlMessage) {
         DeviceMessageRevice deviceMessage = JSON.parseObject(controlMessage, DeviceMessageRevice.class);
-        if (deviceMessage !=null){
+        if (deviceMessage != null) {
             DeviceFeedMqtt deviceFeedCloudMqtt = new DeviceFeedMqtt();
             deviceFeedCloudMqtt.setPacket_type(IotEpaConstant.POINTSETACK);
             deviceFeedCloudMqtt.setSequence_no(deviceMessage.getSequence_no());
             List<DeviceFeedData> feed = new ArrayList<>();
-            if (deviceMessage.getContent() !=null){
-                for (DeviceSendContent deviceData:deviceMessage.getContent()){
+            if (deviceMessage.getContent() != null) {
+                for (DeviceSendContent deviceData : deviceMessage.getContent()) {
                     DeviceFeedData feedData = new DeviceFeedData();
                     feedData.setMeter(deviceData.getMeter());
                     feedData.setFuncid(deviceData.getFuncid());
@@ -118,10 +120,10 @@ public class CommonDevice extends Thread {
                     feed.add(feedData);
                 }
                 deviceFeedCloudMqtt.setContent(feed);
-                sendClient.publish(IotEpaConstant.mqtt_topic_prefix_project +gcId+ IotEpaConstant.SETUP, JSONObject.toJSONString(deviceFeedCloudMqtt));
+                sendClient.publish(IotEpaConstant.mqtt_topic_prefix_project + gcId + IotEpaConstant.SETUP, JSONObject.toJSONString(deviceFeedCloudMqtt));
                 logger.info("{}:反馈到iot-project{}"
-                        ,IotEpaConstant.mqtt_topic_prefix_project +gcId+ IotEpaConstant.SETUP
-                        ,JSONObject.toJSONString(deviceFeedCloudMqtt));
+                        , IotEpaConstant.mqtt_topic_prefix_project + gcId + IotEpaConstant.SETUP
+                        , JSONObject.toJSONString(deviceFeedCloudMqtt));
             }
         }
     }
@@ -195,7 +197,7 @@ public class CommonDevice extends Thread {
             try {
                 return new DecimalFormat("0.00").format(engine.eval(formula));
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 logger.info("{},{}点位计算式转换错误", dm.getEqId(), dm.getParamId());
             }
         }
@@ -224,7 +226,7 @@ public class CommonDevice extends Thread {
                     return value;
                 }
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         return value;
@@ -253,7 +255,7 @@ public class CommonDevice extends Thread {
                     return value;
                 }
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         return value;

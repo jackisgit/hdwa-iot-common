@@ -1,6 +1,7 @@
 package com.wanda.epc.config.emqx;//package com.wd.iot.service.emqx;
 
 import com.wanda.epc.config.MqttProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -16,24 +17,22 @@ import org.springframework.stereotype.Component;
  * @Date 2022-05-20
  */
 @Component
+@Slf4j
 public class MqttAcceptClient {
 
-    private static final Logger logger = LoggerFactory.getLogger( MqttAcceptClient.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(MqttAcceptClient.class);
+    public static MqttClient client;
     @Autowired
     private MqttAcceptCallback mqttAcceptCallback;
-
     @Autowired
     private MqttProperties mqttProperties;
-
-    public static MqttClient client;
 
     private static MqttClient getClient() {
         return client;
     }
 
     private static void setClient(MqttClient client) {
-         MqttAcceptClient.client = client;
+        MqttAcceptClient.client = client;
     }
 
     /**
@@ -50,16 +49,16 @@ public class MqttAcceptClient {
             options.setKeepAliveInterval(mqttProperties.getKeepAlive());
             options.setAutomaticReconnect(mqttProperties.getReconnect());
             options.setCleanSession(mqttProperties.getCleanSession());
-             MqttAcceptClient.setClient(client);
+            MqttAcceptClient.setClient(client);
             try {
                 // 设置回调
                 client.setCallback(mqttAcceptCallback);
                 client.connect(options);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -70,7 +69,7 @@ public class MqttAcceptClient {
         try {
             client.connect();
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -84,7 +83,7 @@ public class MqttAcceptClient {
         try {
             client.subscribe(topic, qos);
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -98,7 +97,7 @@ public class MqttAcceptClient {
         try {
             client.unsubscribe(topic);
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 }

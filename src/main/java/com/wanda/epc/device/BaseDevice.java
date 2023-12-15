@@ -21,27 +21,19 @@ import java.util.concurrent.Executors;
  **/
 public abstract class BaseDevice {
 
-    protected Map<String, List<DeviceMessage>> deviceParamListMap = new HashMap<String, List<DeviceMessage>>();
-
-    public static Map<String, DeviceMessage> controlParamMap = new HashMap<String, DeviceMessage>();
-
     private static final Logger logger = LoggerFactory.getLogger(BaseDevice.class);
-
-    @Value("${epc.gcId}")
-    private String gcId;
-
-    @Value("${epc.gatewayId}")
-    private String gatewayId;
-
+    public static Map<String, DeviceMessage> controlParamMap = new HashMap<String, DeviceMessage>();
+    protected Map<String, List<DeviceMessage>> deviceParamListMap = new HashMap<String, List<DeviceMessage>>();
     @Autowired
     RedisUtil redisUtil;
-
     @Autowired
     MqttSendClient mqttSendClient;
-
     @Autowired
     CommonDevice commonDevice;
-
+    @Value("${epc.gcId}")
+    private String gcId;
+    @Value("${epc.gatewayId}")
+    private String gatewayId;
     /***
      * 线程数
      */
@@ -117,8 +109,8 @@ public abstract class BaseDevice {
     /**
      * 数据采集-带有参数
      *
-     * @return
      * @param obj
+     * @return
      * @throws Exception
      */
     public abstract boolean processData(String... obj) throws Exception;

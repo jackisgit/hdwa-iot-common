@@ -30,12 +30,13 @@ public class MqttConfig {
      * @return
      */
     @Bean
-    public MqttSendClient getMqttSendClient(){
+    public MqttSendClient getMqttSendClient() {
         mqttSendClient.connect();
         return mqttSendClient;
     }
+
     @Bean
-    public MqttAcceptClient getMqttAcceptClient(){
+    public MqttAcceptClient getMqttAcceptClient() {
         mqttAcceptClient.connect();
         return mqttAcceptClient;
     }

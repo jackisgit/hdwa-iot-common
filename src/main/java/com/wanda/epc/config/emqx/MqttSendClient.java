@@ -1,13 +1,12 @@
 package com.wanda.epc.config.emqx;//package com.wd.iot.service.emqx;
 
 import com.wanda.epc.config.MqttProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -21,25 +20,47 @@ import java.util.UUID;
  */
 @Component
 @Primary
+@Slf4j
 public class MqttSendClient {
 
-    private static final Logger logger = LoggerFactory.getLogger( MqttSendClient.class);
-
+    public static MqttClient client;
     @Autowired
     private MqttSendCallBack mqttSendCallBack;
-
     @Autowired
     private MqttProperties mqttProperties;
 
-    public static MqttClient client;
+    /**
+     * 关闭连接
+     *
+     * @param mqttClient
+     */
+    public static void disconnect(MqttClient mqttClient) {
+        try {
+            if (mqttClient != null) mqttClient.disconnect();
+        } catch (MqttException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 
+    /**
+     * 释放资源
+     *
+     * @param mqttClient
+     */
+    public static void close(MqttClient mqttClient) {
+        try {
+            if (mqttClient != null) mqttClient.close();
+        } catch (MqttException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 
     public MqttClient getClient() {
         return client;
     }
 
     private static void setClient(MqttClient client) {
-         MqttAcceptClient.client = client;
+        MqttAcceptClient.client = client;
     }
 
     public MqttClient connect() {
@@ -62,10 +83,10 @@ public class MqttSendClient {
                 client.connect(options);
                 MqttSendClient.setClient(client);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return client;
     }
@@ -87,7 +108,7 @@ public class MqttSendClient {
         try {
             client.publish(topic, message);
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } finally {
 //            disconnect(client);
 //            close(client);
@@ -101,33 +122,7 @@ public class MqttSendClient {
      * @param topic       主题
      * @param pushMessage 消息体
      */
-    public void publish( String topic, String pushMessage) {
-       this.publish(true,topic,pushMessage);
-    }
-
-    /**
-     * 关闭连接
-     *
-     * @param mqttClient
-     */
-    public static void disconnect(MqttClient mqttClient) {
-        try {
-            if (mqttClient != null) mqttClient.disconnect();
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 释放资源
-     *
-     * @param mqttClient
-     */
-    public static void close(MqttClient mqttClient) {
-        try {
-            if (mqttClient != null) mqttClient.close();
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+    public void publish(String topic, String pushMessage) {
+        this.publish(true, topic, pushMessage);
     }
 }

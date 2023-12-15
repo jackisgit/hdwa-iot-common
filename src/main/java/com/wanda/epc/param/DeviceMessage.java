@@ -1,7 +1,5 @@
 package com.wanda.epc.param;
 
-import com.alibaba.fastjson.JSONObject;
-
 /**
  * 设备消息类
  *
@@ -41,7 +39,6 @@ public class DeviceMessage {
     private String opratorStatusString;
 
 
-
     public String getParamName() {
         return paramName;
     }
@@ -49,7 +46,6 @@ public class DeviceMessage {
     public void setParamName(String paramName) {
         this.paramName = paramName;
     }
-
 
 
     public String getProjectId() {

@@ -8,6 +8,7 @@ import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.param.DeviceMessageRevice;
 import com.wanda.epc.param.DeviceSendContent;
 import com.wanda.epc.util.ApplicationContextUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -28,6 +29,7 @@ import java.io.UnsupportedEncodingException;
  * @Date 2022-05-20
  */
 @Component
+@Slf4j
 public class MqttAcceptCallback implements MqttCallbackExtended {
 
     private static final Logger logger = LoggerFactory.getLogger(MqttAcceptCallback.class);
@@ -109,9 +111,9 @@ public class MqttAcceptCallback implements MqttCallbackExtended {
             String s = new String(payload, "UTF-8");
             logger.info("消息的内容是：" + s);
         } catch (MqttException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

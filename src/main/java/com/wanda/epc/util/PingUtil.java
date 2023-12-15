@@ -1,5 +1,7 @@
 package com.wanda.epc.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Queue;
@@ -13,38 +15,34 @@ import java.util.concurrent.Executors;
  * @description ping工具类多线程
  * @date 2023/1/15 16:32:51
  */
+@Slf4j
 public class PingUtil {
 
+    private static String ipsOK = ""; // 可以ping通的IP
+    private static String ipsNO = ""; // 不能ping通的IP
     private Queue<String> allIp; // 需验证的IP
     private int threadNum = 5; // 线程数
-    private static   String ipsOK = ""; // 可以ping通的IP
-    private  static String ipsNO = ""; // 不能ping通的IP
-
-
-    public  String getIpsNO() {
-        return ipsNO;
-    }
-
-
-    public  void setIpsNO(String ipsNO) {
-        PingUtil.ipsNO = ipsNO;
-    }
-
-
-    public  String getIpsOK() {
-        return ipsOK;
-    }
-
-
-    public  void setIpsOK(String ipsOK) {
-        PingUtil.ipsOK = ipsOK;
-    }
 
 
     public PingUtil(Queue<String> allIp) {
         this.allIp = allIp;
     }
 
+    public String getIpsNO() {
+        return ipsNO;
+    }
+
+    public void setIpsNO(String ipsNO) {
+        PingUtil.ipsNO = ipsNO;
+    }
+
+    public String getIpsOK() {
+        return ipsOK;
+    }
+
+    public void setIpsOK(String ipsOK) {
+        PingUtil.ipsOK = ipsOK;
+    }
 
     public void startPing() {
         // 创建一个线程池，多个线程同步执行
@@ -58,7 +56,7 @@ public class PingUtil {
                 Thread.sleep(100);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -80,7 +78,7 @@ public class PingUtil {
                 }
             } catch (SocketException e) {
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
 

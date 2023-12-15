@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MqttSendCallBack implements MqttCallbackExtended {
 
-    private static final Logger logger = LoggerFactory.getLogger( MqttSendCallBack.class);
+    private static final Logger logger = LoggerFactory.getLogger(MqttSendCallBack.class);
 
     /**
      * 客户端断开后触发
@@ -57,9 +57,9 @@ public class MqttSendCallBack implements MqttCallbackExtended {
 //            String s = new String(payload, "UTF-8");
 //            logger.info("消息的内容是：" + s);
 //        } catch (MqttException e) {
-//            e.printStackTrace();
+//            log.error(e.getMessage(), e);
 //        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
+//            log.error(e.getMessage(), e);
 //        }
     }
 

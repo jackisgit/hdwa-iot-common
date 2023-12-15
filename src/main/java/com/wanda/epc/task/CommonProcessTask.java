@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
+
 import java.util.Set;
 
 /**
@@ -24,12 +25,10 @@ import java.util.Set;
 public class CommonProcessTask {
 
     private final static Logger logger = LoggerFactory.getLogger(CommonProcessTask.class);
-
-    @Autowired
-    private CommonDevice device;
     @Autowired
     RedisUtil redisUtil;
-
+    @Autowired
+    private CommonDevice device;
     @Value("${epc.gcId}")
     private String gcId;
     @Value("${epc.gatewayId}")
@@ -38,7 +37,7 @@ public class CommonProcessTask {
 
     @Scheduled(cron = "0 0/4 * * * ?")
     public boolean processData() throws Exception {
-        Set<String> keys = redisUtil.scan("data."+ "Pj" + gcId + "." + gatewayId + ".*");
+        Set<String> keys = redisUtil.scan("data." + "Pj" + gcId + "." + gatewayId + ".*");
         if (!CollectionUtils.isEmpty(keys)) {//data.开头的
             logger.info("开始同步全量的redis数据值为");
             for (String key : keys) {

@@ -1,6 +1,7 @@
 package com.wanda.epc.util;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
  * @author liurs
  * @Description java对象转换的帮助工具类
  */
+@Slf4j
 public class ConvertUtil {
     //定义LOG的输出
     private static Logger logger = LoggerFactory.getLogger(ConvertUtil.class);
@@ -407,7 +409,7 @@ public class ConvertUtil {
             String s = df.format(localDeteTime);
             return s;
         } catch (Exception ex) {
-            logger.error("Millis2StrLong error! request millis:" + millis, ex);
+            log.error("Millis2StrLong error! request millis:" + millis, ex);
         }
         return "";
     }
@@ -450,13 +452,13 @@ public class ConvertUtil {
             long lTime = instant.toEpochMilli();
             return lTime;
         } catch (Exception ex) {
-            logger.error("StrLong2Millis error! request dateStr:" + dateStr, ex);
+            log.error("StrLong2Millis error! request dateStr:" + dateStr, ex);
         }
         return 0;
     }
 
 
-    public static String StrToStr(String dateStr,  String _dtFormat) {
+    public static String StrToStr(String dateStr, String _dtFormat) {
         if (dateStr == null || "".equals(dateStr.trim())) {
             return "";
         }
@@ -469,7 +471,7 @@ public class ConvertUtil {
             String timeStr = Millis2FormatStr(lTime, _dtFormat);
             return timeStr;
         } catch (Exception ex) {
-            logger.error("StrLong2Millis error! request dateStr:" + dateStr, ex);
+            log.error("StrLong2Millis error! request dateStr:" + dateStr, ex);
         }
         return "";
     }
@@ -493,7 +495,7 @@ public class ConvertUtil {
             String s = df.format(localDeteTime);
             return s;
         } catch (Exception ex) {
-            logger.error("Millis2Str error! request millis:" + millis, ex);
+            log.error("Millis2Str error! request millis:" + millis, ex);
         }
         return "";
     }
@@ -517,7 +519,7 @@ public class ConvertUtil {
             long lTime = instant.toEpochMilli();
             return lTime;
         } catch (Exception ex) {
-            logger.error("Str2Millis error! request dateStr:" + dateStr, ex);
+            log.error("Str2Millis error! request dateStr:" + dateStr, ex);
         }
         return 0;
     }
@@ -544,7 +546,7 @@ public class ConvertUtil {
             long lTime = instant.toEpochMilli();
             return lTime;
         } catch (Exception ex) {
-            logger.error("StrFormat2Millis error! request dateStr:" + dateStr + ", _dtFormat:" + _dtFormat, ex);
+            log.error("StrFormat2Millis error! request dateStr:" + dateStr + ", _dtFormat:" + _dtFormat, ex);
         }
         return 0;
     }
@@ -569,7 +571,7 @@ public class ConvertUtil {
             Date date = Date.from(zdt.toInstant());
             return date;
         } catch (Exception ex) {
-            logger.error("StrFormat2Date error! request dateStr:" + dateStr + ", _dtFormat:" + _dtFormat, ex);
+            log.error("StrFormat2Date error! request dateStr:" + dateStr + ", _dtFormat:" + _dtFormat, ex);
         }
         return null;
     }
@@ -596,7 +598,7 @@ public class ConvertUtil {
             String s = df.format(localDeteTime);
             return s;
         } catch (Exception ex) {
-            logger.error("Millis2FormatStr error! request millis:" + millis + ", _dtFormat:" + _dtFormat, ex);
+            log.error("Millis2FormatStr error! request millis:" + millis + ", _dtFormat:" + _dtFormat, ex);
         }
         return "";
     }
@@ -756,7 +758,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextHour error! request minutes:" + minutes, ex);
+            log.error("getNowDataTimeNextHour error! request minutes:" + minutes, ex);
         }
         return plusDateTimeStr;
     }
@@ -774,7 +776,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextHour error! request minutes:" + minutes, ex);
+            log.error("getNowDataTimeNextHour error! request minutes:" + minutes, ex);
         }
         return plusDateTimeStr;
     }
@@ -793,7 +795,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextHour error! request hours:" + hours, ex);
+            log.error("getNowDataTimeNextHour error! request hours:" + hours, ex);
         }
         return plusDateTimeStr;
     }
@@ -811,7 +813,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextHour error! request hours:" + hours, ex);
+            log.error("getNowDataTimeNextHour error! request hours:" + hours, ex);
         }
         return plusDateTimeStr;
     }
@@ -830,7 +832,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextDay error! request days:" + days, ex);
+            log.error("getNowDataTimeNextDay error! request days:" + days, ex);
         }
         return plusDateTimeStr;
     }
@@ -848,7 +850,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextDay error! request days:" + days, ex);
+            log.error("getNowDataTimeNextDay error! request days:" + days, ex);
         }
         return plusDateTimeStr;
     }
@@ -867,7 +869,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextMonth error! request month:" + month, ex);
+            log.error("getNowDataTimeNextMonth error! request month:" + month, ex);
         }
         return plusDateTimeStr;
     }
@@ -885,7 +887,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextMonth error! request month:" + month, ex);
+            log.error("getNowDataTimeNextMonth error! request month:" + month, ex);
         }
         return plusDateTimeStr;
     }
@@ -904,7 +906,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextYears error! request years:" + years, ex);
+            log.error("getNowDataTimeNextYears error! request years:" + years, ex);
         }
         return plusDateTimeStr;
     }
@@ -922,7 +924,7 @@ public class ConvertUtil {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             plusDateTimeStr = date.format(f);
         } catch (Exception ex) {
-            logger.error("getNowDataTimeNextYears error! request years:" + years, ex);
+            log.error("getNowDataTimeNextYears error! request years:" + years, ex);
         }
         return plusDateTimeStr;
     }
@@ -1202,7 +1204,7 @@ public class ConvertUtil {
             SimpleDateFormat dtFormat = new SimpleDateFormat(_dtFormat);
             currentdatetime = dtFormat.format(date);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return currentdatetime;
     }
@@ -1304,7 +1306,7 @@ public class ConvertUtil {
             result = org.apache.commons.codec.binary.Base64.encodeBase64(str.getBytes("UTF-8"));
             return new String(result);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return "";
         }
     }

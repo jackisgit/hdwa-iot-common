@@ -8,10 +8,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * 获取spring容器中bean对象
+ *
+ * @param * @param null
  * @Author 孙率众
  * @Date 下午5:35 2022/9/3
- * @param  * @param null
- * @return null 
+ * @return null
  **/
 @Slf4j
 @Component
@@ -21,6 +22,15 @@ public class SpringUtil implements ApplicationContextAware {
      */
     private static ApplicationContext applicationContext;
 
+    /**
+     * 获取applicationContext
+     *
+     * @return
+     */
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         if (SpringUtil.applicationContext == null) {
@@ -29,15 +39,8 @@ public class SpringUtil implements ApplicationContextAware {
     }
 
     /**
-     * 获取applicationContext
-     * @return
-     */
-    public static ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    /**
      * 通过name获取 Bean.
+     *
      * @param name
      * @return
      */
@@ -47,6 +50,7 @@ public class SpringUtil implements ApplicationContextAware {
 
     /**
      * 通过class获取Bean.
+     *
      * @param clazz
      * @param <T>
      * @return
@@ -57,6 +61,7 @@ public class SpringUtil implements ApplicationContextAware {
 
     /**
      * 通过name,以及Clazz返回指定的Bean
+     *
      * @param name
      * @param clazz
      * @param <T>
