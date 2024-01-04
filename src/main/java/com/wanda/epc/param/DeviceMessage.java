@@ -1,12 +1,14 @@
 package com.wanda.epc.param;
 
-import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
+import java.util.Map;
 
 /**
  * 设备消息类
  *
  * @author liurs
  */
+@Data
 public class DeviceMessage {
 
     private String outParam;
@@ -40,113 +42,8 @@ public class DeviceMessage {
     //状态计算转换
     private String opratorStatusString;
 
+    private Map<String, String> variable;
 
-
-    public String getParamName() {
-        return paramName;
-    }
-
-    public void setParamName(String paramName) {
-        this.paramName = paramName;
-    }
-
-
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getCollectCode() {
-        return collectCode;
-    }
-
-    public void setCollectCode(String collectCode) {
-        this.collectCode = collectCode;
-    }
-
-    public String getEqId() {
-        return eqId;
-    }
-
-    public void setEqId(String eqId) {
-        this.eqId = eqId;
-    }
-
-    public Integer getParamId() {
-        return paramId;
-    }
-
-    public void setParamId(Integer paramId) {
-        this.paramId = paramId;
-    }
-
-    public String getOutParamId() {
-        return outParamId;
-    }
-
-    public void setOutParamId(String outParamId) {
-        this.outParamId = outParamId;
-    }
-
-    public boolean isCalc() {
-        return isCalc;
-    }
-
-    public void setCalc(boolean calc) {
-        isCalc = calc;
-    }
-
-    public String getFormula() {
-        return formula;
-    }
-
-    public void setFormula(String formula) {
-        this.formula = formula;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getOutParam() {
-        return outParam;
-    }
-
-    public void setOutParam(String outParam) {
-        this.outParam = outParam;
-    }
-
-    public String getOpratorControlString() {
-        return opratorControlString;
-    }
-
-    public void setOpratorControlString(String opratorControlString) {
-        this.opratorControlString = opratorControlString;
-    }
-
-    public String getOpratorStatusString() {
-        return opratorStatusString;
-    }
-
-    public void setOpratorStatusString(String opratorStatusString) {
-        this.opratorStatusString = opratorStatusString;
-    }
 
     @Override
     public String toString() {
