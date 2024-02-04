@@ -53,7 +53,7 @@ public class CommonDevice extends Thread {
 
     private int processInterval = 1;
 
-    private String statusKey = "subsystem_connect_status_";
+    public static String statusKey = "subsystem_connect_status_";
 
     public synchronized void sendMessage(DeviceMessage dm) {
         DeviceSendMessage dsm = convert(dm);
