@@ -22,8 +22,8 @@ import java.util.concurrent.Executors;
 public abstract class BaseDevice {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDevice.class);
-    public static Map<String, DeviceMessage> controlParamMap = new HashMap<String, DeviceMessage>();
-    protected Map<String, List<DeviceMessage>> deviceParamListMap = new HashMap<String, List<DeviceMessage>>();
+    public static Map<String, DeviceMessage> controlParamMap = new HashMap<>();
+    protected static Map<String, List<DeviceMessage>> deviceParamListMap = new HashMap<>();
     @Autowired
     RedisUtil redisUtil;
     @Autowired
@@ -39,6 +39,31 @@ public abstract class BaseDevice {
      */
     @Value("${epc.threadNum}")
     private int threadNum;
+
+    /**
+     * 数据采集发送
+     *
+     * @param dm
+     */
+    public void sendMessage(DeviceMessage dm) {
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param outParamId
+     * @param value
+     */
+    public void sendMsg(String outParamId, String value) {
+        List<DeviceMessage> deviceMessageList = deviceParamListMap.get(outParamId);
+        if (CollectionUtils.isEmpty(deviceMessageList)) {
+            return;
+        }
+        deviceMessageList.forEach(deviceMessage -> {
+            deviceMessage.setValue(value);
+            commonDevice.sendMessage(deviceMessage);
+        });
+    }
 
     @PostConstruct
     public void run() {
@@ -77,14 +102,6 @@ public abstract class BaseDevice {
             executor.execute(commonDevice);
         }
     }
-
-    /**
-     * 数据采集发送
-     *
-     * @param dm
-     */
-    public abstract void sendMessage(DeviceMessage dm);
-
 
     /**
      * 数据采集
