@@ -31,29 +31,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class CommonDevice extends Thread {
 
     private final static Logger logger = LoggerFactory.getLogger(CommonDevice.class);
-
+    public static String statusKey = "subsystem_connect_status_";
     @Autowired
     MqttSendClient sendClient;
-
     @Autowired
     RedisUtil redisUtil;
-
     @Value("${epc.gcId}")
     private String gcId;
-
     @Value("${epc.gatewayId}")
     private String gatewayId;
-
     @Value("${epc.subsystem}")
     private String subsystem;
-
     private Queue<DeviceSendMessage> deviceMsgQueue = new ConcurrentLinkedQueue<DeviceSendMessage>();
-
     private String clientId = "IOT-EPC-" + gcId + "-" + gatewayId;
-
     private int processInterval = 1;
-
-    public static String statusKey = "subsystem_connect_status_";
 
     public synchronized void sendMessage(DeviceMessage dm) {
         DeviceSendMessage dsm = convert(dm);
