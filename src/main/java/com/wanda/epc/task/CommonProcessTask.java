@@ -42,6 +42,10 @@ public class CommonProcessTask {
         if (!CollectionUtils.isEmpty(keys)) {//data.开头的
             logger.info("开始同步全量的redis数据值为");
             for (String key : keys) {
+                //不上传data开头的手自动数据，由采集器上传
+                if (key.contains("manualAutoSet")) {
+                    continue;
+                }
                 DeviceMessage dm = JSON.parseObject(JSON.toJSONString(redisUtil.get(key)), DeviceMessage.class);
                 dm.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                 device.sendAllMessage(dm);
