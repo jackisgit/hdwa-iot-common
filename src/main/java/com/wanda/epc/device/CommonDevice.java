@@ -279,7 +279,7 @@ public class CommonDevice extends Thread {
     /**
      * @Description 子系统状态
      */
-    private void subsystemStatus() {
+    public void subsystemStatus() {
         if (StringUtils.isNotEmpty(subsystem)) {
             String[] subsystemSplit = subsystem.split("/");
             if (subsystemSplit.length > 0) {
