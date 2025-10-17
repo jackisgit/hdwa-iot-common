@@ -12,8 +12,6 @@ import com.wanda.epc.param.*;
 import com.wanda.epc.util.ConvertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,7 +28,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Slf4j
 public class CommonDevice extends Thread {
 
-    private final static Logger logger = LoggerFactory.getLogger(CommonDevice.class);
     public static String statusKey = "subsystem_connect_status_";
     @Autowired
     MqttSendClient sendClient;
@@ -76,7 +73,7 @@ public class CommonDevice extends Thread {
                 }
                 Thread.sleep(processInterval);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                log.error("出现异常", e);
             }
         }
     }
@@ -112,7 +109,7 @@ public class CommonDevice extends Thread {
                 }
                 deviceFeedCloudMqtt.setContent(feed);
                 sendClient.publish(IotEpaConstant.mqtt_topic_prefix_project + gcId + IotEpaConstant.SETUP, JSONObject.toJSONString(deviceFeedCloudMqtt));
-                logger.info("{}:反馈到iot-project{}"
+                log.info("{}:反馈到iot-project{}"
                         , IotEpaConstant.mqtt_topic_prefix_project + gcId + IotEpaConstant.SETUP
                         , JSONObject.toJSONString(deviceFeedCloudMqtt));
             }
@@ -189,7 +186,7 @@ public class CommonDevice extends Thread {
                 return new DecimalFormat("0.00").format(engine.eval(formula));
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                logger.info("{},{}点位计算式转换错误", dm.getEqId(), dm.getParamId());
+                log.info("{},{}点位计算式转换错误", dm.getEqId(), dm.getParamId());
             }
         }
         return value;
@@ -207,13 +204,13 @@ public class CommonDevice extends Thread {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(operatorStatus);
-                logger.info("采集值转换:{},{},转换前值为:{}", dm.getEqId(), dm.getParamId(), value);
+                log.info("采集值转换:{},{},转换前值为:{}", dm.getEqId(), dm.getParamId(), value);
                 if (value.indexOf(".") != -1) {
                     value = value.substring(0, value.indexOf("."));
                 }
                 if (jsonNode.get(value) != null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
                     value = jsonNode.get(value).asText();
-                    logger.info("采集值转换:{},{},转换后值为：{}", dm.getEqId(), dm.getParamId(), value);
+                    log.info("采集值转换:{},{},转换后值为：{}", dm.getEqId(), dm.getParamId(), value);
                     return value;
                 }
             } catch (JsonProcessingException e) {
@@ -236,13 +233,13 @@ public class CommonDevice extends Thread {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(controlStatus);
 
-                logger.info("控制值转换:{},{},转换前值为:{}", dm.getEqId(), dm.getParamId(), value);
+                log.info("控制值转换:{},{},转换前值为:{}", dm.getEqId(), dm.getParamId(), value);
                 if (value.indexOf(".") != -1) {
                     value = value.substring(0, value.indexOf("."));
                 }
                 if (jsonNode.get(value) != null && StringUtils.isNotEmpty(jsonNode.get(value).asText())) {
                     value = jsonNode.get(value).asText();
-                    logger.info("控制值转换:{},{},转换后值为：{}", dm.getEqId(), dm.getParamId(), value);
+                    log.info("控制值转换:{},{},转换后值为：{}", dm.getEqId(), dm.getParamId(), value);
                     return value;
                 }
             } catch (JsonProcessingException e) {
